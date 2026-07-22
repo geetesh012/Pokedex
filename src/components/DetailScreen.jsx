@@ -1,5 +1,5 @@
 import React from "react";
-import { ArrowLeft, Star, Loader2 } from "lucide-react";
+import { ArrowLeft, Star, Loader2, Users, BarChart2 } from "lucide-react";
 import { usePokemonDetail } from "../hooks/usePokemonDetail.js";
 import { DetailHero } from "./DetailHero.jsx";
 import { DetailMeta } from "./DetailMeta.jsx";
@@ -10,7 +10,17 @@ import { EvolutionChain } from "./EvolutionChain.jsx";
 import { MovesList } from "./MovesList.jsx";
 
 /** Full detail screen for one Pokémon: fetches its own data via a hook. */
-export function DetailScreen({ id, onBack, isFav, onToggleFav, onSelectPokemon }) {
+export function DetailScreen({
+  id,
+  onBack,
+  isFav,
+  onToggleFav,
+  onSelectPokemon,
+  isInTeam,
+  onToggleTeam,
+  isInCompare,
+  onToggleCompare,
+}) {
   const { data, loading, error } = usePokemonDetail(id);
 
   return (
@@ -20,9 +30,17 @@ export function DetailScreen({ id, onBack, isFav, onToggleFav, onSelectPokemon }
           <ArrowLeft size={18} />
         </button>
         <span className="detail-topbar-title">DEX ENTRY</span>
-        <button className="icon-btn" onClick={() => onToggleFav(id)}>
-          <Star size={18} fill={isFav ? "#F5B942" : "none"} color={isFav ? "#F5B942" : "#24321F"} />
-        </button>
+        <div className="detail-topbar-actions">
+          <button className="icon-btn" onClick={() => onToggleTeam(id)} title="Add to Team">
+            <Users size={17} fill={isInTeam ? "#F5B942" : "none"} color={isInTeam ? "#F5B942" : "#24321F"} />
+          </button>
+          <button className="icon-btn" onClick={() => onToggleCompare(id)} title="Add to Compare">
+            <BarChart2 size={17} color={isInCompare ? "#F5B942" : "#24321F"} strokeWidth={isInCompare ? 3 : 2} />
+          </button>
+          <button className="icon-btn" onClick={() => onToggleFav(id)} title="Favorite">
+            <Star size={17} fill={isFav ? "#F5B942" : "none"} color={isFav ? "#F5B942" : "#24321F"} />
+          </button>
+        </div>
       </div>
 
       {loading && (

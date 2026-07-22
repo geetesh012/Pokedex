@@ -1,3 +1,4 @@
+/** Extracts the numeric id from a PokeAPI resource URL, e.g. ".../pokemon/25/" -> 25 */
 export function idFromUrl(url) {
   const parts = url.split("/").filter(Boolean);
   return parseInt(parts[parts.length - 1], 10);
@@ -7,3 +8,9 @@ export function idFromUrl(url) {
 export function pad(id) {
   return "#" + String(id).padStart(3, "0");
 }
+
+// /** Returns true if `id` falls within the given { min, max } generation range. */
+// export function isInGeneration(id, generation) {
+//   if (!generation) return true;
+//   return id >= generation.min && id <= generation.max;
+// }
