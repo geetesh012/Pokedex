@@ -51,9 +51,9 @@ export function useMultiTypeFilter() {
         return next;
       });
     },
-    [fetchTypeIds]
+    [fetchTypeIds],
   );
-
+  const clearAllTypes = useCallback(() => setSelectedTypes(new Set()), []);
   const filteredIds = useMemo(() => {
     if (selectedTypes.size === 0) return null;
     const sets = [...selectedTypes].map((t) => typeIdSets[t]).filter(Boolean);
@@ -69,5 +69,13 @@ export function useMultiTypeFilter() {
 
   const isLoading = [...selectedTypes].some((t) => loadingTypes.has(t));
 
-  return { selectedTypes, mode, setMode, toggleType, filteredIds, isLoading };
+  return {
+    selectedTypes,
+    mode,
+    setMode,
+    toggleType,
+    clearAllTypes,
+    filteredIds,
+    isLoading,
+  };
 }
