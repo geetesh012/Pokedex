@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import "./pokedex.css";
 
 import { usePokemonList } from "./hooks/usePokemonList.js";
@@ -14,9 +14,9 @@ import { useTeam } from "./hooks/useTeam.js";
 import { DeviceShell } from "./components/DeviceShell.jsx";
 import { TabBar } from "./components/TabBar.jsx";
 import { SearchBar } from "./components/SearchBar.jsx";
-import { TypeFilterRow } from "./components/TypeFilterRow.jsx";
-import { SortControl } from "./components/SortControl.jsx";
-import { ViewToggle } from "./components/ViewToggle.jsx";
+import { FilterBar } from "./components/FilterBar.jsx";
+import { ActiveFilterChips } from "./components/ActiveFilterChips.jsx";
+import { FilterPanel } from "./components/FilterPanel.jsx";
 import { PokemonGrid } from "./components/PokemonGrid.jsx";
 import { DetailScreen } from "./components/DetailScreen.jsx";
 import { CompareScreen } from "./components/CompareScreen.jsx";
@@ -25,8 +25,15 @@ import { OfflineBanner } from "./components/OfflineBanner.jsx";
 
 export default function Pokedex() {
   const { allMon, loading, error } = usePokemonList();
-  const { selectedTypes, mode, setMode, toggleType, filteredIds, isLoading: typeLoading } =
-    useMultiTypeFilter();
+  const {
+    selectedTypes,
+    mode,
+    setMode,
+    toggleType,
+    clearAllTypes,
+    filteredIds,
+    isLoading: typeLoading,
+  } = useMultiTypeFilter();
   const { favorites, toggleFav, isFavorite } = useFavorites();
   const booted = useBoot();
   const { compareIds, toggleCompare, removeFromCompare } = useCompareList();
@@ -38,6 +45,7 @@ export default function Pokedex() {
   const [showFavOnly, setShowFavOnly] = useState(false);
   const [sortBy, setSortBy] = useState("dex");
   const [selectedId, setSelectedId] = useState(null);
+  const [filtersOpen, setFiltersOpen] = useState(false);
 
   const filtered = useFilteredPokemon({
     allMon,
@@ -58,12 +66,19 @@ export default function Pokedex() {
       ? [...filtered].sort((a, b) => (statTotals[b.id] ?? 0) - (statTotals[a.id] ?? 0))
       : nameSorted;
 
+  const activeFilterCount = (generation ? 1 : 0) + selectedTypes.size + (showFavOnly ? 1 : 0);
+  const hasAnyFilter = activeFilterCount > 0;
+
+  const clearAllFilters = () => {
+    // setGeneration(null);
+    clearAllTypes();
+    setShowFavOnly(false);
+  };
+
   const openFromAnywhere = (id) => {
     setSelectedId(id);
     setActiveTab("dex");
   };
-
-  const toggleCompareFromToggle = (id) => toggleCompare(id);
 
   return (
     <div className="pokedex-root">
@@ -71,6 +86,7 @@ export default function Pokedex() {
       <DeviceShell booted={booted}>
         {selectedId ? (
           <DetailScreen
+            key={selectedId}
             id={selectedId}
             onBack={() => setSelectedId(null)}
             isFav={isFavorite(selectedId)}
@@ -79,7 +95,7 @@ export default function Pokedex() {
             isInTeam={isInTeam(selectedId)}
             onToggleTeam={(id) => (isInTeam(id) ? removeFromTeam(id) : addToTeam(id))}
             isInCompare={compareIds.includes(selectedId)}
-            onToggleCompare={toggleCompareFromToggle}
+            onToggleCompare={toggleCompare}
           />
         ) : (
           <>
@@ -90,38 +106,62 @@ export default function Pokedex() {
               compareCount={compareIds.length}
             />
 
-            {activeTab === "dex" && (
-              <>
-                <SearchBar value={search} onChange={setSearch} />
-                {/* <GenerationFilter selectedGen={generation} onChange={setGeneration} /> */}
-                <TypeFilterRow
-                  selectedTypes={selectedTypes}
-                  mode={mode}
-                  onToggleType={toggleType}
-                  onModeChange={setMode}
-                />
-                <div className="controls-row">
-                  <ViewToggle showFavOnly={showFavOnly} onChange={setShowFavOnly} favoriteCount={favorites.size} />
-                  <SortControl sortBy={sortBy} onChange={setSortBy} resultCount={filtered.length} />
-                </div>
+            <div className="tab-content" key={activeTab}>
+              {activeTab === "dex" && (
+                <>
+                  <SearchBar value={search} onChange={setSearch} />
 
-                <PokemonGrid
-                  pokemon={displayList}
-                  isLoading={loading || typeLoading}
-                  hasError={error}
-                  isFavorite={isFavorite}
-                  onOpen={setSelectedId}
-                />
-              </>
-            )}
+                  <FilterBar
+                    activeCount={activeFilterCount}
+                    isOpen={filtersOpen}
+                    onToggle={() => setFiltersOpen((v) => !v)}
+                    sortBy={sortBy}
+                    onSortChange={setSortBy}
+                    resultCount={filtered.length}
+                  />
 
-            {activeTab === "team" && (
-              <TeamScreen team={team} onRemove={removeFromTeam} onOpen={openFromAnywhere} />
-            )}
+                  <ActiveFilterChips
+                    generation={generation}
+                    selectedTypes={selectedTypes}
+                    showFavOnly={showFavOnly}
+                    onClearGen={() => setGeneration(null)}
+                    onClearType={toggleType}
+                    onClearFav={() => setShowFavOnly(false)}
+                  />
 
-            {activeTab === "compare" && (
-              <CompareScreen compareIds={compareIds} onRemove={removeFromCompare} onOpen={openFromAnywhere} />
-            )}
+                  <FilterPanel
+                    isOpen={filtersOpen}
+                    generation={generation}
+                    onGenerationChange={setGeneration}
+                    selectedTypes={selectedTypes}
+                    mode={mode}
+                    onToggleType={toggleType}
+                    onModeChange={setMode}
+                    showFavOnly={showFavOnly}
+                    onFavOnlyChange={setShowFavOnly}
+                    favoriteCount={favorites.size}
+                    onClearAll={clearAllFilters}
+                    hasAnyFilter={hasAnyFilter}
+                  />
+
+                  <PokemonGrid
+                    pokemon={displayList}
+                    isLoading={loading || typeLoading}
+                    hasError={error}
+                    isFavorite={isFavorite}
+                    onOpen={setSelectedId}
+                  />
+                </>
+              )}
+
+              {activeTab === "team" && (
+                <TeamScreen team={team} onRemove={removeFromTeam} onOpen={openFromAnywhere} />
+              )}
+
+              {activeTab === "compare" && (
+                <CompareScreen compareIds={compareIds} onRemove={removeFromCompare} onOpen={openFromAnywhere} />
+              )}
+            </div>
           </>
         )}
       </DeviceShell>

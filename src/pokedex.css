@@ -352,3 +352,49 @@
     transition: none !important;
   }
 }
+
+/* Compact filter bar (replaces the old always-expanded filter rows) */
+.filter-bar { display: flex; align-items: center; justify-content: space-between; gap: 6px; margin-bottom: 6px; flex-wrap: wrap; }
+.filter-toggle-btn {
+  display: flex; align-items: center; gap: 5px; font-family: 'Space Mono', monospace;
+  font-size: 10px; font-weight: 700; text-transform: uppercase;
+  border: 1.5px solid var(--screen-ink); background: transparent; color: var(--screen-ink);
+  border-radius: 4px; padding: 5px 9px; cursor: pointer;
+  transition: background 0.18s ease, color 0.18s ease, transform 0.12s ease;
+}
+.filter-toggle-btn:active { transform: scale(0.95); }
+.filter-toggle-btn.active { background: var(--screen-ink); color: var(--screen-bg); }
+.filter-count-badge {
+  background: var(--amber); color: #1a1410; border-radius: 999px; font-size: 9px;
+  padding: 1px 6px; font-weight: 700; line-height: 1.4;
+}
+
+/* Active filter chips: quick-view + quick-remove of whatever is applied */
+.active-chips-row { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 8px; }
+.active-chip {
+  display: flex; align-items: center; gap: 4px; font-family: 'Space Mono', monospace;
+  font-size: 9px; font-weight: 700; text-transform: capitalize;
+  border: 1.5px solid var(--screen-ink); color: var(--screen-ink); background: rgba(243,239,228,0.5);
+  border-radius: 999px; padding: 3px 6px 3px 9px; cursor: pointer;
+  transition: background 0.15s ease, transform 0.12s ease;
+}
+.active-chip:hover { background: rgba(243,239,228,0.9); }
+.active-chip:active { transform: scale(0.94); }
+
+/* Collapsible filter panel */
+.filter-panel {
+  background: rgba(36,50,31,0.05); border: 1px solid rgba(36,50,31,0.2); border-radius: 8px;
+  padding: 10px; margin-bottom: 10px; animation: panelOpen 0.2s ease both;
+}
+@keyframes panelOpen { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
+.filter-panel-section { margin-bottom: 10px; }
+.filter-panel-section:last-of-type { margin-bottom: 6px; }
+.filter-panel-label {
+  font-size: 9px; font-weight: 700; text-transform: uppercase; opacity: 0.55;
+  letter-spacing: 0.6px; margin-bottom: 5px;
+}
+.clear-all-btn {
+  width: 100%; font-family: 'Space Mono', monospace; font-size: 10px; font-weight: 700;
+  text-transform: uppercase; text-align: center; background: transparent; border: none;
+  color: var(--shell-red-dark); cursor: pointer; padding: 4px; text-decoration: underline;
+}
