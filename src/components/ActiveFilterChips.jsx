@@ -2,18 +2,13 @@ import React from "react";
 import { X } from "lucide-react";
 import { TYPE_COLORS } from "../constants.js";
 
-/** Removable pills for whichever filters are currently active (generation, types, favorites-only). */
-export function ActiveFilterChips({ generation, selectedTypes, showFavOnly, onClearGen, onClearType, onClearFav }) {
-  const hasAny = generation || selectedTypes.size > 0 || showFavOnly;
+/** Removable pills for whichever filters are currently active (types, favorites-only). */
+export function ActiveFilterChips({ selectedTypes, showFavOnly, onClearType, onClearFav }) {
+  const hasAny = selectedTypes.size > 0 || showFavOnly;
   if (!hasAny) return null;
 
   return (
     <div className="active-chips-row">
-      {generation && (
-        <button className="active-chip" onClick={onClearGen}>
-          {generation.label} <X size={11} />
-        </button>
-      )}
       {[...selectedTypes].map((type) => (
         <button
           key={type}

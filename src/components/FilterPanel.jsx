@@ -1,13 +1,10 @@
 import React from "react";
-// import { GenerationFilter } from "./GenerationFilter.jsx";
 import { TypeFilterRow } from "./TypeFilterRow.jsx";
 import { ViewToggle } from "./ViewToggle.jsx";
 
-/** Collapsible panel bundling generation, type, and favorites filters. Hidden unless `isOpen`. */
+/** Collapsible panel bundling type and favorites filters. Hidden unless `isOpen`. */
 export function FilterPanel({
   isOpen,
-  // generation,
-  onGenerationChange,
   selectedTypes,
   mode,
   onToggleType,
@@ -22,11 +19,6 @@ export function FilterPanel({
 
   return (
     <div className="filter-panel">
-      {/* <div className="filter-panel-section">
-        <div className="filter-panel-label">Generation</div>
-        <GenerationFilter selectedGen={generation} onChange={onGenerationChange} />
-      </div> */}
-
       <div className="filter-panel-section">
         <div className="filter-panel-label">Type</div>
         <TypeFilterRow

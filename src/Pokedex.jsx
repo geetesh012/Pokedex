@@ -41,7 +41,6 @@ export default function Pokedex() {
 
   const [activeTab, setActiveTab] = useState("dex");
   const [search, setSearch] = useState("");
-  // const [generation, setGeneration] = useState(null);
   const [showFavOnly, setShowFavOnly] = useState(false);
   const [sortBy, setSortBy] = useState("dex");
   const [selectedId, setSelectedId] = useState(null);
@@ -51,7 +50,6 @@ export default function Pokedex() {
     allMon,
     search,
     typeIds: filteredIds,
-    // generation,
     showFavOnly,
     favorites,
   });
@@ -66,11 +64,10 @@ export default function Pokedex() {
       ? [...filtered].sort((a, b) => (statTotals[b.id] ?? 0) - (statTotals[a.id] ?? 0))
       : nameSorted;
 
-  const activeFilterCount = (generation ? 1 : 0) + selectedTypes.size + (showFavOnly ? 1 : 0);
+  const activeFilterCount = selectedTypes.size + (showFavOnly ? 1 : 0);
   const hasAnyFilter = activeFilterCount > 0;
 
   const clearAllFilters = () => {
-    // setGeneration(null);
     clearAllTypes();
     setShowFavOnly(false);
   };
@@ -121,18 +118,14 @@ export default function Pokedex() {
                   />
 
                   <ActiveFilterChips
-                    generation={generation}
                     selectedTypes={selectedTypes}
                     showFavOnly={showFavOnly}
-                    onClearGen={() => setGeneration(null)}
                     onClearType={toggleType}
                     onClearFav={() => setShowFavOnly(false)}
                   />
 
                   <FilterPanel
                     isOpen={filtersOpen}
-                    generation={generation}
-                    onGenerationChange={setGeneration}
                     selectedTypes={selectedTypes}
                     mode={mode}
                     onToggleType={toggleType}
