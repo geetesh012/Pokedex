@@ -53,7 +53,7 @@ export function CompareScreen({ compareIds, onRemove, onOpen }) {
       <div className="compare-header-row">
         {mons.map((m) => (
           <div key={m.id} className="compare-mon-header">
-            <button className="icon-btn compare-remove" onClick={() => onRemove(m.id)}>
+            <button className="icon-btn compare-remove" onClick={() => onRemove(m.id)} aria-label={`Remove ${m.name} from comparison`}>
               <X size={12} />
             </button>
             <button className="compare-mon-btn" onClick={() => onOpen(m.id)}>

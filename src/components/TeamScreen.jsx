@@ -3,11 +3,12 @@ import { X, Loader2 } from "lucide-react";
 import { useBulkPokemonDetail } from "../hooks/useBulkPokemonDetail.js";
 import { useTeamCoverage } from "../hooks/useTeamCoverage.js";
 import { TypeChip } from "./TypeChip.jsx";
+import { DataBackup } from "./DataBackup.jsx";
 import { SPRITE_BASE, TEAM_SLOTS } from "../constants.js";
 import { pad } from "../utils.js";
 
-/** 6-slot team builder: filled slots, empty-slot hints, and a coverage-gap summary. */
-export function TeamScreen({ team, onRemove, onOpen }) {
+/** 6-slot team builder: filled slots, empty-slot hints, a coverage-gap summary, and backup controls. */
+export function TeamScreen({ team, onRemove, onOpen, favorites, onImportBackup }) {
   const { detailsById, loading } = useBulkPokemonDetail(team);
   const memberTypeLists = team
     .map((id) => detailsById[id])
@@ -23,11 +24,11 @@ export function TeamScreen({ team, onRemove, onOpen }) {
         {slots.map((id, i) =>
           id ? (
             <div key={id} className="team-slot filled">
-              <button className="icon-btn team-remove" onClick={() => onRemove(id)}>
+              <button className="icon-btn team-remove" onClick={() => onRemove(id)} aria-label={`Remove ${detailsById[id]?.name ?? pad(id)} from team`}>
                 <X size={12} />
               </button>
               <button className="team-slot-btn" onClick={() => onOpen(id)}>
-                <img src={`${SPRITE_BASE}/${id}.png`} alt={`team member ${id}`} className="team-slot-img" />
+                <img src={`${SPRITE_BASE}/${id}.png`} alt="" className="team-slot-img" />
                 <span className="team-slot-name">{detailsById[id]?.name ?? pad(id)}</span>
               </button>
             </div>
@@ -78,6 +79,9 @@ export function TeamScreen({ team, onRemove, onOpen }) {
           )}
         </div>
       )}
+
+      <div className="detail-section-title" style={{ marginTop: 6 }}>BACKUP</div>
+      <DataBackup favorites={favorites} team={team} onImport={onImportBackup} />
     </div>
   );
 }

@@ -4,14 +4,18 @@ import { SPRITE_BASE } from "../constants.js";
 import { pad } from "../utils.js";
 
 /** One grid tile: sprite, dex number, name, and favorite badge. */
-export function PokemonCard({ mon, onOpen, isFav }) {
+export function PokemonCard({ mon, onOpen, isFav, focused }) {
   return (
-    <button className="mon-card" onClick={() => onOpen(mon.id)}>
+    <button
+      className={`mon-card ${focused ? "mon-card-focused" : ""}`}
+      onClick={() => onOpen(mon.id)}
+      aria-label={`${mon.name}, ${pad(mon.id)}${isFav ? ", favorited" : ""}`}
+    >
       {isFav && <Star className="mon-fav-badge" size={14} fill="#F5B942" color="#F5B942" />}
       <div className="mon-card-imgwrap">
         <img
           src={`${SPRITE_BASE}/${mon.id}.png`}
-          alt={mon.name}
+          alt=""
           loading="lazy"
           className="mon-card-img"
           onError={(e) => { e.target.style.visibility = "hidden"; }}

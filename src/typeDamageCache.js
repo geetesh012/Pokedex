@@ -1,3 +1,5 @@
+const EMPTY_RELATIONS = { double_damage_from: [], half_damage_from: [], no_damage_from: [] };
+
 const cache = new Map();
 const inflight = new Map();
 
@@ -5,6 +7,8 @@ const inflight = new Map();
  * Fetches (and caches) the damage_relations for one type.
  * Shared across the whole app so type-effectiveness and team-coverage
  * features never fetch the same type twice in a session.
+ * Falls back to neutral (empty) relations if the response is malformed,
+ * rather than letting a bad/flaky API response crash the caller.
  */
 export function getTypeDamageRelations(typeName) {
   if (cache.has(typeName)) return Promise.resolve(cache.get(typeName));
@@ -13,9 +17,14 @@ export function getTypeDamageRelations(typeName) {
   const promise = fetch(`https://pokeapi.co/api/v2/type/${typeName}`)
     .then((r) => r.json())
     .then((d) => {
-      cache.set(typeName, d.damage_relations);
+      const relations = d?.damage_relations ?? EMPTY_RELATIONS;
+      cache.set(typeName, relations);
       inflight.delete(typeName);
-      return d.damage_relations;
+      return relations;
+    })
+    .catch(() => {
+      inflight.delete(typeName);
+      return EMPTY_RELATIONS;
     });
 
   inflight.set(typeName, promise);
@@ -29,9 +38,9 @@ export async function computeMultipliers(defendingTypeNames, allTypes) {
 
   const relations = await Promise.all(defendingTypeNames.map(getTypeDamageRelations));
   relations.forEach((rel) => {
-    rel.double_damage_from.forEach((t) => { multiplier[t.name] *= 2; });
-    rel.half_damage_from.forEach((t) => { multiplier[t.name] *= 0.5; });
-    rel.no_damage_from.forEach((t) => { multiplier[t.name] *= 0; });
+    (rel?.double_damage_from ?? []).forEach((t) => { multiplier[t.name] *= 2; });
+    (rel?.half_damage_from ?? []).forEach((t) => { multiplier[t.name] *= 0.5; });
+    (rel?.no_damage_from ?? []).forEach((t) => { multiplier[t.name] *= 0; });
   });
 
   return multiplier;

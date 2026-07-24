@@ -8,9 +8,3 @@ export function idFromUrl(url) {
 export function pad(id) {
   return "#" + String(id).padStart(3, "0");
 }
-
-// /** Returns true if `id` falls within the given { min, max } generation range. */
-// export function isInGeneration(id, generation) {
-//   if (!generation) return true;
-//   return id >= generation.min && id <= generation.max;
-// }

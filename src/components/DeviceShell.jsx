@@ -1,7 +1,8 @@
 import React from "react";
+import { Volume2, VolumeX, Palette, Info } from "lucide-react";
 
-/** The red handheld casing: top lights + title, screen bezel, bottom D-pad/buttons. */
-export function DeviceShell({ booted, children }) {
+/** The handheld casing: top lights + title + settings, screen bezel, bottom D-pad/buttons. */
+export function DeviceShell({ booted, children, soundEnabled, onToggleSound, onCycleTheme, onOpenAbout }) {
   return (
     <div className="shell">
       <div className="shell-top">
@@ -12,6 +13,17 @@ export function DeviceShell({ booted, children }) {
           <div className="lens-small" style={{ background: "#e05555" }} />
         </div>
         <span className="shell-title">POKÉDEX</span>
+        <div className="shell-settings">
+          <button className="shell-icon-btn" onClick={onToggleSound} title="Toggle sound" aria-label="Toggle sound">
+            {soundEnabled ? <Volume2 size={14} /> : <VolumeX size={14} />}
+          </button>
+          <button className="shell-icon-btn" onClick={onCycleTheme} title="Change theme" aria-label="Change theme">
+            <Palette size={14} />
+          </button>
+          <button className="shell-icon-btn" onClick={onOpenAbout} title="About" aria-label="About">
+            <Info size={14} />
+          </button>
+        </div>
       </div>
 
       <div className="screen-bezel">
