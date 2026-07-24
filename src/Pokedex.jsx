@@ -37,6 +37,7 @@ export default function Pokedex() {
     setMode,
     toggleType,
     clearAllTypes,
+    clearAll,
     filteredIds,
     typeLoading,
     showFavOnly,
@@ -77,8 +78,7 @@ export default function Pokedex() {
   const hasAnyFilter = activeFilterCount > 0;
 
   const clearAllFilters = () => {
-    clearAllTypes();
-    setShowFavOnly(false);
+    clearAll();
   };
 
   const openPokemon = (id) => {

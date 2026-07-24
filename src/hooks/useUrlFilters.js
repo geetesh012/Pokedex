@@ -136,6 +136,7 @@ export function useUrlFilters() {
   );
 
   const clearAllTypes = useCallback(() => update({ types: "" }), [update]);
+  const clearAll = useCallback(() => update({ types: "", fav: false }), [update]);
 
   return {
     search: q,
@@ -145,6 +146,7 @@ export function useUrlFilters() {
     setMode,
     toggleType,
     clearAllTypes,
+    clearAll,
     filteredIds,
     typeLoading,
     showFavOnly,
